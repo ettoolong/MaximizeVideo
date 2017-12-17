@@ -5,22 +5,13 @@
   "version": "0.0.1",
   "homepage_url": "https://github.com/ettoolong/MaximizeVideo",
   "icons": {
-    "16": "icon/icon.svg",
-    "32": "icon/icon.svg",
-    "48": "icon/icon.svg",
-    "64": "icon/icon.svg",
-    "96": "icon/icon.svg"
+    "16": "icon/icon.png",
+    "32": "icon/icon.png",
+    "48": "icon/icon.png",
+    "64": "icon/icon.png",
+    "96": "icon/icon.png"
   },
-  "applications": {
-    "gecko": {
-      "id": "MaximizeVideo@ettoolong",
-      "strict_min_version": "51.0"
-    }
-  },
-  "developer": {
-    "name": "Ett Chung",
-    "url": "https://github.com/ettoolong/MaximizeVideo"
-  },
+  "author": "Ett Chung",
   "background": {
     "scripts": ["script/background.js"]
   },
@@ -37,7 +28,7 @@
   "browser_action": {
     "browser_style": true,
     "default_title": "__MSG_extDescription__",
-    "default_icon": "icon/icon_b.svg"
+    "default_icon": "icon/icon_b.png"
   },
   "permissions": [
     "storage",
@@ -47,7 +38,6 @@
   "default_locale": "en",
   "options_ui": {
     "page": "options.html",
-    "open_in_tab": false,
-    "browser_style": true
+    "open_in_tab": false
   }
 }

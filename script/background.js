@@ -8,7 +8,7 @@ let defaultPreference = {
   supportFlash: true,
   minWidth: 100,
   minHeight: 100,
-  iconColor: 0,
+  // iconColor: 0,
   version: 3
 };
 let preferences = {};
@@ -32,9 +32,9 @@ const storageChangeHandler = (changes, area) => {
     for (let item of changedItems) {
       preferences[item] = changes[item].newValue;
       switch (item) {
-        case 'iconColor':
-          setBrowserActionIcon();
-          break;
+        // case 'iconColor':
+        //   setBrowserActionIcon();
+        //   break;
       }
     }
   }
@@ -67,17 +67,17 @@ const loadPreference = () => {
         chrome.storage.local.set(update);
       }
     }
-    setBrowserActionIcon();
+    //setBrowserActionIcon();
   });
 };
 
-const setBrowserActionIcon = () => {
-  if(preferences.iconColor === 1) {
-    chrome.browserAction.setIcon({path: 'icon/icon_w.svg'});
-  } else {
-    chrome.browserAction.setIcon({path: 'icon/icon_b.svg'});
-  }
-};
+// const setBrowserActionIcon = () => {
+//   if(preferences.iconColor === 1) {
+//     chrome.browserAction.setIcon({path: 'icon/icon_w.png'});
+//   } else {
+//     chrome.browserAction.setIcon({path: 'icon/icon_b.png'});
+//   }
+// };
 
 window.addEventListener('DOMContentLoaded', event => {
   loadPreference();
@@ -136,7 +136,7 @@ const messageHandler = (message, sender, sendResponse) => {
   }
   else if(message.action === 'popupWindow'){
     if(preferences.popupWindow) {
-      chrome.runtime.sendMessage('PopupWindow@ettoolong',
+      chrome.runtime.sendMessage('nnlippelgfbglbhiccffmnmlnhmbjjpe',
       {
         action: 'popupWindow',
         tabId: sender.tab.id

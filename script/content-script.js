@@ -133,6 +133,10 @@ else if(window.location.href.startsWith('https://player.twitch.tv/')) {
 else if(window.location.href.startsWith('https://www.netflix.com/')) {
   mvImpl = new MVNetflix();
 }
+else if(window.location.href.startsWith('https://www.youtube.com/')) {
+  mvImpl = new MVUniversal();
+  mvImpl.mvClass = 'show-y';
+}
 else {
   mvImpl = new MVUniversal();
 }
@@ -268,7 +272,6 @@ function lockMainNodeStyle(lock) {
 }
 
 function maximizeMainNode() {
-  let hc = mvImpl.mainNode.getAttribute('mvHashCode');
   let originalStyle = mvImpl.originalStyle = (mvImpl.mainNode.getAttribute('style') || '');
   let vnNewStyle = '';
   originalStyle = originalStyle.trim().replace(/\r\n/g, '\r').replace(/\n/g, '\r').replace(/\r/g, '');
