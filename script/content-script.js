@@ -268,7 +268,6 @@ function lockMainNodeStyle(lock) {
 }
 
 function maximizeMainNode() {
-  let hc = mvImpl.mainNode.getAttribute('mvHashCode');
   let originalStyle = mvImpl.originalStyle = (mvImpl.mainNode.getAttribute('style') || '');
   let vnNewStyle = '';
   originalStyle = originalStyle.trim().replace(/\r\n/g, '\r').replace(/\n/g, '\r').replace(/\r/g, '');
