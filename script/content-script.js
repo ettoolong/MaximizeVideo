@@ -13,7 +13,7 @@ MVUniversal.prototype={
     if(tagName === 'video' || tagName === 'iframe') {
       let attribute = tagName === 'video' ? 'controls' : 'allowfullscreen';
       if(show) {
-        this.original[attribute] = node.getAttribute(attribute);
+        this.original[attribute] = node.hasAttribute(attribute) ? node.getAttribute(attribute) : null;
         node.setAttribute(attribute, 'true');
       }
       let script = document.createElement('script');
@@ -21,7 +21,7 @@ MVUniversal.prototype={
       script.textContent = '(function(){Object.defineProperty(document.querySelector("video[mvHashCode='+this.currentHashCode+']"), "'+attribute+'", {configurable: false});document.head.removeChild(document.getElementById("mvScript"));})()';
       document.head.appendChild(script);
       if(!show) {
-        if(this.original[attribute])
+        if(this.original[attribute] !== null)
           node.setAttribute(attribute, this.original[attribute]);
         else
           node.removeAttribute(attribute);
