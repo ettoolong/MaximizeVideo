@@ -133,10 +133,6 @@ else if(window.location.href.startsWith('https://player.twitch.tv/')) {
 else if(window.location.href.startsWith('https://www.netflix.com/')) {
   mvImpl = new MVNetflix();
 }
-else if(window.location.href.startsWith('https://www.youtube.com/')) {
-  mvImpl = new MVUniversal();
-  mvImpl.mvClass = 'show-y';
-}
 else {
   mvImpl = new MVUniversal();
 }
