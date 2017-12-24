@@ -12,6 +12,7 @@
 
 [mvclass=show],
 [mvclass=show-t] {
+  contain:unset !important;
   min-width:0px !important;
   min-height:0px !important;
   width:0px !important;
@@ -36,6 +37,7 @@
 html[mvclass=core],
 body[mvclass=show],
 body[mvclass=show-t] {
+  contain:unset !important;
   background-color: #000 !important;
   position: relative !important;
   overflow: hidden !important;
