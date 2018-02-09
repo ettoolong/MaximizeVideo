@@ -52,7 +52,11 @@ MVTwitch.prototype={
   topTags: ['body', 'html'],
   mvClass: 'show-t',
   setCoreNode: function () {
-    document.querySelector('.player-controls-bottom').setAttribute('mvclass', 'core');
+    let coreNode = document.querySelector('.pl-controls-bottom');
+    if(!coreNode) {
+      coreNode = document.querySelector('.player-controls-bottom');
+    }
+    coreNode.setAttribute('mvclass', 'core');
   },
   getMainNode: function (node) {
     return document.querySelector('.video-player .video-player__container');
@@ -68,7 +72,10 @@ MVETwitch.prototype={
   topTags: ['body', 'html'],
   mvClass: 'show-t',
   setCoreNode: function () {
-    let controlsNode = document.querySelector('.player-controls-bottom');
+    let controlsNode = document.querySelector('.pl-controls-bottom');
+    if(!controlsNode) {
+      controlsNode = document.querySelector('.player-controls-bottom');
+    }
     controlsNode.setAttribute('mvclass', 'core');
     controlsNode.parentNode.setAttribute('mvclass', 'core');
   },
