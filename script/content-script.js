@@ -1,3 +1,6 @@
+let currentPrefs = {};
+let init = false;
+
 function MVUniversal() {}
 MVUniversal.prototype={
   topTags: [],
@@ -56,7 +59,12 @@ MVTwitch.prototype={
     if(!coreNode) {
       coreNode = document.querySelector('.player-controls-bottom');
     }
+    coreNode.parentNode.setAttribute('mvclass', 'core');
     coreNode.setAttribute('mvclass', 'core');
+    let streamstatus = document.querySelector('.player-streamstatus');
+    if(streamstatus) {
+      streamstatus.setAttribute('mvclass', 'core');
+    }
   },
   getMainNode: function (node) {
     return document.querySelector('.video-player .video-player__container');
@@ -78,6 +86,14 @@ MVETwitch.prototype={
     }
     controlsNode.setAttribute('mvclass', 'core');
     controlsNode.parentNode.setAttribute('mvclass', 'core');
+    let streamstatus = document.querySelector('.player-streamstatus');
+    if(streamstatus) {
+      streamstatus.setAttribute('mvclass', 'core');
+    }
+    let playerui = document.querySelector('.player-ui');
+    if(playerui) {
+      playerui.setAttribute('mvclass', 'core');
+    }
   },
   getMainNode: function (node) {
     return node;
@@ -529,6 +545,29 @@ function removeVideoMask() {
   }
 }
 
+function clearHideCursorTimer() {
+  if(mvImpl.hideCursorTimer) {
+    clearTimeout(mvImpl.hideCursorTimer);
+    mvImpl.hideCursorTimer = null;
+  }
+}
+
+function setHideCursorTimer() {
+  clearHideCursorTimer();
+  if(currentPrefs.autoHideCursor) {
+    mvImpl.hideCursorTimer = setTimeout(()=>{
+      mvImpl.vnNewStyle = mvImpl.vnNewStyle.replace('cursor:default','cursor:none');
+      mvImpl.mainNode.setAttribute('style', mvImpl.vnNewStyle);
+
+      mvImpl.mainNode.addEventListener('mousemove', e => {
+        mvImpl.vnNewStyle = mvImpl.vnNewStyle.replace('cursor:none','cursor:default');
+        mvImpl.mainNode.setAttribute('style', mvImpl.vnNewStyle);
+        setHideCursorTimer();
+      }, {capture: true, once: true}); // FF50+, Ch55+
+    }, currentPrefs.delayForHideCursor*1000);
+  }
+}
+
 chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
   if(message.action === 'maximizeVideo') {
     if(mvImpl.status === 'maximaVideo')
@@ -543,6 +582,9 @@ chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
 
     let elem = document.querySelector('video[mvHashCode="'+message.hashCode+'"],embed[mvHashCode="'+message.hashCode+'"][type="application/x-shockwave-flash"],object[mvHashCode="'+message.hashCode+'"][type="application/x-shockwave-flash"]');
     if(elem) {
+      initPrefs( ()=>{
+        setHideCursorTimer();
+      });
       mvImpl.setCoreNode();
       mvImpl.currentHashCode = message.hashCode;
       if(window.location.href.startsWith('https://www.youtube.com/embed/') && !elem.src) {
@@ -590,6 +632,7 @@ chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
         chrome.runtime.sendMessage({action: 'cancelSelectMode'});
       }
       else if(mvImpl.status === 'maximaVideo') {
+        clearHideCursorTimer();
         chrome.runtime.sendMessage({action: 'cancelMaximaMode'});
       }
     }
@@ -636,5 +679,38 @@ if(window === window.top) {
     window.addEventListener('DOMContentLoaded', event => {
       chrome.runtime.sendMessage({action: 'tabReady'});
     }, true);
+  }
+}
+
+function initPrefs(cb){
+  if(!init) {
+    init = true;
+    chrome.storage.local.get(results => {
+      if ((typeof results.length === 'number') && (results.length > 0)) {
+        results = results[0];
+      }
+      currentPrefs = results;
+      cb();
+    });
+
+    chrome.storage.onChanged.addListener((changes, area) => {
+      if(area === 'local') {
+        let changedItems = Object.keys(changes);
+        for (let item of changedItems) {
+          currentPrefs[item] = changes[item].newValue;
+          switch (item) {
+            case 'autoHideCursor':
+            case 'delayForHideCursor':
+              if(mvImpl.status === 'maximaVideo') {
+                setHideCursorTimer();
+              }
+              break;
+          }
+        }
+      }
+    });
+  }
+  else {
+    cb();
   }
 }

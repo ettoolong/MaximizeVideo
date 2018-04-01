@@ -54,8 +54,16 @@
   "installPopupWindow": {
 		"message": "https://addons.mozilla.org/firefox/addon/popup-window/",
 		"description": ""
+	},
+  "delayForHideCursor": {
+		"message": "最大化影片後，於",
+		"description": ""
   },
-  "iconColor": {
+  "delayForHideCursor2": {
+		"message": "秒後自動隱藏滑鼠游標。",
+		"description": ""
+  },
+	"iconColor": {
 		"message": "工具列圖示顏色",
 		"description": ""
   },
