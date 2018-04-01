@@ -55,7 +55,15 @@
 		"message": "https://addons.mozilla.org/firefox/addon/popup-window/",
 		"description": ""
   },
-  "iconColor": {
+  "delayForHideCursor": {
+    "message": "When maximize video, auto hide mouse cursor after ",
+    "description": ""
+  },
+  "delayForHideCursor2": {
+    "message": " seconds.",
+    "description": ""
+  },
+	"iconColor": {
 		"message": "Toolbar button icon color",
 		"description": ""
   },

@@ -25,12 +25,20 @@
 }
 
 .controls[mvclass=core],
+.hover-display[mvclass=core],
+.pl-controls-bottom[mvclass=core],
+.player-streamstatus[mvclass=core],
 .player-controls-bottom[mvclass=core] {
   position: fixed !important;
   z-index: 2147483640;
 }
 
+.pl-controls-bottom[mvclass=core]:hover,
 .player-controls-bottom[mvclass=core]:hover {
+  opacity: 1 !important;
+}
+
+.hover-display[mvclass=core]:hover {
   opacity: 1 !important;
 }
 

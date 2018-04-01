@@ -18,3 +18,7 @@ select.itemInput {
   width: 250px;
   margin-left:12px;
 }
+
+.delayForHideCursor {
+  width: 50px;
+}

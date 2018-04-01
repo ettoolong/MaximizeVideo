@@ -8,8 +8,10 @@ let defaultPreference = {
   supportFlash: true,
   minWidth: 100,
   minHeight: 100,
+  autoHideCursor: false,
+  delayForHideCursor: 5,
   // iconColor: 0,
-  version: 3
+  version: 4
 };
 let preferences = {};
 
