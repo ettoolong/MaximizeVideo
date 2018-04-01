@@ -9,7 +9,7 @@ let defaultPreference = {
   minWidth: 100,
   minHeight: 100,
   autoHideCursor: false,
-  delayForHideCursor: 5,
+  delayForHideCursor: 6,
   // iconColor: 0,
   version: 4
 };

@@ -56,11 +56,7 @@
 		"description": ""
   },
   "delayForHideCursor": {
-		"message": "最大化影片後，於",
-		"description": ""
-  },
-  "delayForHideCursor2": {
-		"message": "秒後自動隱藏滑鼠游標。",
+		"message": "最大化影片後自動隱藏滑鼠游標。",
 		"description": ""
   },
 	"iconColor": {

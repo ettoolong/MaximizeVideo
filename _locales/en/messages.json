@@ -56,11 +56,7 @@
 		"description": ""
   },
   "delayForHideCursor": {
-    "message": "When maximize video, auto hide mouse cursor after ",
-    "description": ""
-  },
-  "delayForHideCursor2": {
-    "message": " seconds.",
+    "message": "When maximize video, auto hide mouse cursor.",
     "description": ""
   },
 	"iconColor": {

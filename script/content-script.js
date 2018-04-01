@@ -1,3 +1,6 @@
+let currentPrefs = {};
+let init = false;
+
 function MVUniversal() {}
 MVUniversal.prototype={
   topTags: [],
@@ -561,7 +564,7 @@ function setHideCursorTimer() {
         mvImpl.mainNode.setAttribute('style', mvImpl.vnNewStyle);
         setHideCursorTimer();
       }, {capture: true, once: true}); // FF50+, Ch55+
-    }, currentPrefs.delayForHideCursor*1000);
+    }, 6000); //currentPrefs.delayForHideCursor*1000
   }
 }
 
