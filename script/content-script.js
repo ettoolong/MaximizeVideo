@@ -135,7 +135,7 @@ let vnStyle = [
   'max-height:100% !important;',
   'margin:0 !important;',
   'padding:0 !important;',
-  'transform:none !important',
+  'transform:none !important;',
   'visibility:visible !important;',
   'border-width:0 !important;',
   'cursor:default !important;',
