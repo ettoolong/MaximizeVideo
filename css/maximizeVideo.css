@@ -22,6 +22,7 @@
   transform-style:flat !important;
   -webkit-transformStyle:flat !important;
   border-width:0px !important;
+  will-change:auto !important;
 }
 
 .controls[mvclass=core],
