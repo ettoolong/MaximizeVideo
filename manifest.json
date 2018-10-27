@@ -2,7 +2,7 @@
   "description": "__MSG_extDescription__",
   "manifest_version": 2,
   "name": "__MSG_extName__",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "homepage_url": "https://github.com/ettoolong/MaximizeVideo",
   "icons": {
     "16": "icon/icon.png",
@@ -39,5 +39,13 @@
   "options_ui": {
     "page": "options.html",
     "open_in_tab": false
+  },
+  "commands": {
+    "maximizeVideo": {
+      "suggested_key": {
+        "default": "Alt+Shift+M"
+      },
+      "description": "Maximize video"
+    }
   }
 }

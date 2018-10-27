@@ -87,13 +87,17 @@ window.addEventListener('DOMContentLoaded', event => {
 
 chrome.browserAction.disable();
 chrome.browserAction.onClicked.addListener(tab => {
+  execBrowserAction(tab);
+});
+
+const execBrowserAction = (tab) => {
   let hashCode = getHashCode();
   chrome.tabs.sendMessage(tab.id, {
     action: 'setVideoMask',
     toolbarAction: preferences.toolbarAction,
     hashCode: hashCode
   });
-});
+};
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tabInfo) => {
   try{
@@ -128,6 +132,19 @@ chrome.tabs.query({}, tabs => {
     else { //complete
       chrome.browserAction.enable(tab.id);
     }
+  }
+});
+
+chrome.commands.onCommand.addListener(command => {
+  if (command === "maximizeVideo") {
+    chrome.tabs.query({active: true, currentWindow: true}, tabs => {
+      if ((typeof tabs !== 'undefined') && (tabs.length > 0)) {
+        let tab = tabs[0];
+        execBrowserAction(tab);
+      }
+      else {
+      }
+    });
   }
 });
 
