@@ -1,74 +1,74 @@
 {
-	"extName": {
-		"message": "Maximize Video",
-		"description": ""
-	},
-	"extDescription": {
-		"message": "將 HTML5/Flash 影片放到最大，填滿頁面。",
-		"description": ""
-	},
-	"optionPageTitle": {
-		"message": "Maximize Video 設定：",
-		"description": ""
+  "extName": {
+    "message": "Maximize Video",
+    "description": ""
   },
-	"maximizeThisVideo": {
-		"message": "將此影片最大化",
-		"description": ""
-	},
+  "extDescription": {
+    "message": "將 HTML5/Flash 影片放到最大，填滿頁面。",
+    "description": ""
+  },
+  "optionPageTitle": {
+    "message": "Maximize Video 設定：",
+    "description": ""
+  },
+  "maximizeThisVideo": {
+    "message": "將此影片最大化",
+    "description": ""
+  },
   "toolbarAction": {
-		"message": "於工具列啟動後：",
-		"description": ""
+    "message": "於工具列啟動後：",
+    "description": ""
   },
-	"selectFirstVideo": {
-		"message": "自動最大化頁面中第一個找到的影片(如果三秒內沒找到任何影片，將自動取消)",
-		"description": ""
+  "selectFirstVideo": {
+    "message": "自動最大化頁面中第一個找到的影片(如果三秒內沒找到任何影片，將自動取消)",
+    "description": ""
   },
   "dontSelectVideo": {
-		"message": "手動選擇要最大化的影片",
-		"description": ""
+    "message": "手動選擇要最大化的影片",
+    "description": ""
   },
   "supportFlash": {
-		"message": "支援 Flash 影片",
-		"description": ""
+    "message": "支援 Flash 影片",
+    "description": ""
   },
   "ignoreTinyElement": {
-		"message": "忽略小型元素：",
-		"description": ""
-	},
-	"minWidth": {
-		"message": "最小寬度",
-		"description": ""
+    "message": "忽略小型元素：",
+    "description": ""
+  },
+  "minWidth": {
+    "message": "最小寬度",
+    "description": ""
   },
   "minHeight": {
-		"message": "最小高度",
-		"description": ""
+    "message": "最小高度",
+    "description": ""
   },
-	"popupWindow": {
-		"message": "影片最大化後自動彈出至獨立視窗",
-		"description": ""
+  "popupWindow": {
+    "message": "影片最大化後自動彈出至獨立視窗",
+    "description": ""
   },
   "needOtherAddon": {
-		"message": "**要啟用此功能需另外安裝 Popup Window 套件：",
-		"description": ""
+    "message": "**要啟用此功能需另外安裝 Popup Window 套件：",
+    "description": ""
   },
   "installPopupWindow": {
-		"message": "https://addons.mozilla.org/firefox/addon/popup-window/",
-		"description": ""
+    "message": "https://addons.mozilla.org/firefox/addon/popup-window/",
+    "description": ""
   },
   "delayForHideCursor": {
-		"message": "最大化影片後自動隱藏滑鼠游標。",
-		"description": ""
+    "message": "最大化影片後自動隱藏滑鼠游標。",
+    "description": ""
   },
-	"iconColor": {
-		"message": "工具列圖示顏色",
-		"description": ""
+  "iconColor": {
+    "message": "工具列圖示顏色",
+    "description": ""
   },
   "iconColorBlack": {
-		"message": "黑",
-		"description": ""
+    "message": "黑",
+    "description": ""
   },
   "iconColorWhite": {
-		"message": "白",
-		"description": ""
+    "message": "白",
+    "description": ""
   }
 }
