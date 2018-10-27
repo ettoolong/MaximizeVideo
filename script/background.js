@@ -11,7 +11,8 @@ let defaultPreference = {
   autoHideCursor: false,
   delayForHideCursor: 5,
   iconColor: 0,
-  version: 4
+  shortcut: 'Ctrl+Shift+M',
+  version: 5
 };
 let preferences = {};
 
@@ -36,6 +37,9 @@ const storageChangeHandler = (changes, area) => {
       switch (item) {
         case 'iconColor':
           setBrowserActionIcon();
+          break;
+        case 'shortcut':
+          applyCommand();
           break;
       }
     }
@@ -70,6 +74,7 @@ const loadPreference = () => {
       }
     }
     setBrowserActionIcon();
+    applyCommand();
   });
 };
 
@@ -87,29 +92,54 @@ window.addEventListener('DOMContentLoaded', event => {
 
 chrome.browserAction.disable();
 chrome.browserAction.onClicked.addListener(tab => {
-  let hashCode = getHashCode();
-  chrome.tabs.sendMessage(tab.id, {
-    action: 'setVideoMask',
-    toolbarAction: preferences.toolbarAction,
-    hashCode: hashCode
-  });
+  execBrowserAction(tab);
 });
 
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tabInfo) => {
-  try{
-    chrome.tabs.sendMessage(tabId, {
-      action: 'getReadyStatus'
-    }, response => {
-      if(response){
-        if(response.readyStatus) {
-          chrome.browserAction.enable(tabId);
-        }
-        else {
-          chrome.browserAction.disable(tabId);
-        }
-      }
-    });
+const applyCommand = () => {
+  let keys = preferences.shortcut.split('+');
+  if(keys.length !== 3) keys = defaultPreference.shortcut.split('+');
+  let shortcut = keys.filter(item => item).join('+');
+  try {
+    if(shortcut !== '') {
+      browser.commands.update({
+        name: 'maximizeVideo',
+        shortcut: shortcut
+      });
+    }
+    else {
+      browser.commands.reset('maximizeVideo');
+    }
   } catch(ex){}
+};
+
+const execBrowserAction = (tab) => {
+  if(!['about:addons', 'about:blank'].includes(tab.url)) {
+    let hashCode = getHashCode();
+    chrome.tabs.sendMessage(tab.id, {
+      action: 'setVideoMask',
+      toolbarAction: preferences.toolbarAction,
+    hashCode: hashCode
+    });
+  }
+};
+
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tabInfo) => {
+  if(!['about:addons', 'about:blank'].includes(tabInfo.url)) {
+    try{
+      chrome.tabs.sendMessage(tabId, {
+        action: 'getReadyStatus'
+      }, response => {
+        if(response){
+          if(response.readyStatus) {
+            chrome.browserAction.enable(tabId);
+          }
+          else {
+            chrome.browserAction.disable(tabId);
+          }
+        }
+      });
+    } catch(ex){}
+  }
 });
 
 chrome.tabs.query({}, tabs => {
@@ -128,6 +158,23 @@ chrome.tabs.query({}, tabs => {
     else { //complete
       chrome.browserAction.enable(tab.id);
     }
+  }
+});
+
+chrome.commands.onCommand.addListener(command => {
+  if (command === "maximizeVideo") {
+    chrome.tabs.query({active: true, currentWindow: true}, tabs => {
+      if ((typeof tabs !== 'undefined') && (tabs.length > 0)) {
+        let tab = tabs[0];
+        browser.browserAction.isEnabled({tabId: tab.id}).then(result => {
+          if(result === true) {
+            execBrowserAction(tab);
+          }
+        });
+      }
+      else {
+      }
+    });
   }
 });
 
@@ -187,9 +234,6 @@ const externalMessageHandler = (message, sender, sendResponse) => {
 
   if(message.action === 'maximizeVideo' && message.tabId !== undefined) {
     let toolbarAction = preferences.toolbarAction;
-    let supportFlash = preferences.supportFlash;
-    let minWidth = preferences.minWidth;
-    let minHeight = preferences.minHeight;
     let hashCode = getHashCode();
     if(message.autoSelect !== undefined) {
       toolbarAction = message.autoSelect === true ? 1 : 0;
