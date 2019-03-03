@@ -83,3 +83,15 @@ body[mvclass=show-t] {
 .mvVideoBlock:hover {
   opacity: 0.5;
 }
+
+/* ref: https://chromium.googlesource.com/chromium/blink/+/72fef91ac1ef679207f51def8133b336a6f6588f/Source/core/css/mediaControls.css */
+video::-webkit-media-controls {
+  width: inherit !important;
+  height: inherit !important;
+  position: relative !important;
+  direction: ltr !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+}
