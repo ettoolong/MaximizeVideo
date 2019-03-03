@@ -139,6 +139,7 @@ let vnStyle = [
   'visibility:visible !important;',
   'border-width:0 !important;',
   'cursor:default !important;',
+  'object-fit:contain !important;',
   'z-index: 2147483639 !important;',
   'background:black !important;'].join('');
 let vnStyleList = [
