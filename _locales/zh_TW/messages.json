@@ -70,5 +70,9 @@
   "iconColorWhite": {
     "message": "白",
     "description": ""
+  },
+  "execute": {
+    "message": "影片最大化",
+    "description": ""
   }
 }

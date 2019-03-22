@@ -2,7 +2,7 @@
   "description": "__MSG_extDescription__",
   "manifest_version": 2,
   "name": "__MSG_extName__",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "homepage_url": "https://github.com/ettoolong/MaximizeVideo",
   "icons": {
     "16": "icon/icon.png",
@@ -13,13 +13,13 @@
   },
   "author": "Ett Chung",
   "background": {
-    "scripts": ["script/background.js"]
+    "scripts": ["js/background.js"]
   },
 
   "content_scripts": [
     {
       "matches": ["http://*/*","https://*/*","file:///*"],
-      "js": ["script/content-script.js"],
+      "js": ["js/content-script.js"],
       "css": ["css/maximizeVideo.css"],
       "all_frames": true,
       "run_at": "document_start"
@@ -32,8 +32,7 @@
   },
   "permissions": [
     "storage",
-    "tabs",
-    "activeTab"
+    "tabs"
   ],
   "default_locale": "en",
   "options_ui": {
@@ -45,7 +44,7 @@
       "suggested_key": {
         "default": "Alt+Shift+M"
       },
-      "description": "Maximize video"
+      "description": "__MSG_execute__"
     }
   }
 }

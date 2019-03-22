@@ -1,74 +1,78 @@
 {
-	"extName": {
-		"message": "Maximize Video",
-		"description": ""
-	},
-	"extDescription": {
-		"message": "Maximize HTML5/Flash video and fill current tab.",
-		"description": ""
-	},
-	"optionPageTitle": {
-		"message": "Maximize Video Preferences:",
-		"description": ""
-	},
-	"maximizeThisVideo": {
-		"message": "Maximize this video",
-		"description": ""
-	},
-  "toolbarAction": {
-		"message": "Toolbar button action:",
-		"description": ""
+  "extName": {
+    "message": "Maximize Video",
+    "description": ""
   },
-	"selectFirstVideo": {
-		"message": "Auto maximize first video element(If not found any video element in 3 seconds, auto cancel)",
-		"description": ""
+  "extDescription": {
+    "message": "Maximize HTML5/Flash video and fill current tab.",
+    "description": ""
+  },
+  "optionPageTitle": {
+    "message": "Maximize Video Preferences:",
+    "description": ""
+  },
+  "maximizeThisVideo": {
+    "message": "Maximize this video",
+    "description": ""
+  },
+  "toolbarAction": {
+    "message": "Toolbar button action:",
+    "description": ""
+  },
+  "selectFirstVideo": {
+    "message": "Auto maximize first video element(If not found any video element in 3 seconds, auto cancel)",
+    "description": ""
   },
   "dontSelectVideo": {
-		"message": "Manual selct video element",
-		"description": ""
+    "message": "Manual selct video element",
+    "description": ""
   },
   "supportFlash": {
-		"message": "Support Flash video",
-		"description": ""
+    "message": "Support Flash video",
+    "description": ""
   },
   "ignoreTinyElement": {
-		"message": "Ignore tiny element:",
-		"description": ""
-	},
-	"minWidth": {
-		"message": "Minimum width",
-		"description": ""
+    "message": "Ignore tiny element:",
+    "description": ""
+  },
+  "minWidth": {
+    "message": "Minimum width",
+    "description": ""
   },
   "minHeight": {
-		"message": "Minimum height",
-		"description": ""
+    "message": "Minimum height",
+    "description": ""
   },
-	"popupWindow": {
-		"message": "After maximize video, pop-up current tab to standalone window",
-		"description": ""
+  "popupWindow": {
+    "message": "After maximize video, pop-up current tab to standalone window",
+    "description": ""
   },
   "needOtherAddon": {
-		"message": "**You need install another add-on 'Popup Window' to enable this function: ",
-		"description": ""
+    "message": "**You need install another add-on 'Popup Window' to enable this function: ",
+    "description": ""
   },
-	"installPopupWindow": {
-		"message": "https://addons.mozilla.org/firefox/addon/popup-window/",
-		"description": ""
+  "installPopupWindow": {
+    "message": "https://addons.mozilla.org/firefox/addon/popup-window/",
+    "description": ""
   },
   "delayForHideCursor": {
     "message": "When maximize video, auto hide mouse cursor.",
     "description": ""
   },
-	"iconColor": {
-		"message": "Toolbar button icon color",
-		"description": ""
+  "iconColor": {
+    "message": "Toolbar button icon color",
+    "description": ""
   },
   "iconColorBlack": {
-		"message": "Black",
-		"description": ""
+    "message": "Black",
+    "description": ""
   },
   "iconColorWhite": {
-		"message": "White",
-		"description": ""
+    "message": "White",
+    "description": ""
+  },
+  "execute": {
+    "message": "Maximize video",
+    "description": ""
   }
 }
