@@ -13,23 +13,6 @@ div.col {
   width: 60px;
 }
 
-select {
-  margin-left:4px;
-  margin-right:6px;
-}
-
-.invalid {
-  box-shadow: 1px 1px 4px #f20, -1px -1px 4px #f20;
-}
-
-.error {
-  color: red;
-}
-
-.hide {
-  display: none;
-}
-
 .delayForHideCursor {
   width: 50px;
 }

@@ -75,16 +75,8 @@
     "message": "白",
     "description": ""
   },
-  "hotkey": {
-    "message": "熱鍵",
-    "description": ""
-  },
-  "invalidSetting": {
-    "message": "無效的設定值",
-    "description": ""
-  },
-  "disableHotkey": {
-    "message": "停用熱鍵",
+  "execute": {
+    "message": "影片最大化",
     "description": ""
   }
 }

@@ -1,6 +1,176 @@
 let currentPrefs = {};
 let init = false;
 
+const shortcutFuncs = {
+  toggleCaptions: function(v){
+    const validTracks = [];
+    for(let i = 0; i < v.textTracks.length; ++i){
+      const tt = v.textTracks[i];
+      if(tt.mode === 'showing'){
+        tt.mode = 'disabled';
+        if(v.textTracks.addEventListener){
+          // If text track event listeners are supported
+          // (they are on the most recent Chrome), add
+          // a marker to remember the old track. Use a
+          // listener to delete it if a different track
+          // is selected.
+          v.cbhtml5vsLastCaptionTrack = tt.label;
+          function cleanup(e){
+            for(let i = 0; i < v.textTracks.length; ++i){
+              const ott = v.textTracks[i];
+              if(ott.mode === 'showing'){
+                delete v.cbhtml5vsLastCaptionTrack;
+                v.textTracks.removeEventListener('change', cleanup);
+                return;
+              }
+            }
+          }
+          v.textTracks.addEventListener('change', cleanup);
+        }
+        return;
+      }else if(tt.mode !== 'hidden'){
+        validTracks.push(tt);
+      }
+    }
+    // If we got here, none of the tracks were selected.
+    if(validTracks.length === 0){
+      return true; // Do not prevent default if no UI activated
+    }
+    // Find the best one and select it.
+    validTracks.sort(function(a, b){
+
+      if(v.cbhtml5vsLastCaptionTrack){
+        const lastLabel = v.cbhtml5vsLastCaptionTrack;
+
+        if(a.label === lastLabel && b.label !== lastLabel){
+          return -1;
+        }else if(b.label === lastLabel && a.label !== lastLabel){
+          return 1;
+        }
+      }
+
+      const aLang = a.language.toLowerCase(),
+            bLang = b.language.toLowerCase(),
+            navLang = navigator.language.toLowerCase();
+
+      if(aLang === navLang && bLang !== navLang){
+        return -1;
+      }else if(bLang === navLang && aLang !== navLang){
+        return 1;
+      }
+
+      const aPre = aLang.split('-')[0],
+            bPre = bLang.split('-')[0],
+            navPre = navLang.split('-')[0];
+
+      if(aPre === navPre && bPre !== navPre){
+        return -1;
+      }else if(bPre === navPre && aPre !== navPre){
+        return 1;
+      }
+
+      return 0;
+    })[0].mode = 'showing';
+  },
+
+  togglePlay: function(v){
+    if(v.paused)
+      v.play();
+    else
+      v.pause();
+  },
+
+  toStart: function(v){
+    v.currentTime = 0;
+  },
+
+  toEnd: function(v){
+    v.currentTime = v.duration;
+  },
+
+  skipLeft: function(v,key,shift,ctrl){
+    if(shift)
+      v.currentTime -= 10;
+    else if(ctrl)
+      v.currentTime -= 1;
+    else
+      v.currentTime -= 5;
+  },
+
+  skipRight: function(v,key,shift,ctrl){
+    if(shift)
+      v.currentTime += 10;
+    else if(ctrl)
+      v.currentTime += 1;
+    else
+      v.currentTime += 5;
+  },
+
+  increaseVol: function(v){
+    if(v.volume <= 0.9) v.volume += 0.1;
+    else v.volume = 1;
+  },
+
+  decreaseVol: function(v){
+    if(v.volume >= 0.1) v.volume -= 0.1;
+    else v.volume = 0;
+  },
+
+  toggleMute: function(v){
+    v.muted = !v.muted;
+  },
+
+  toggleFS: function(v){
+    v.requestFullscreen();
+  },
+
+  slow: function(v,key,shift){
+    if(v.playbackRate >= 0.25) v.playbackRate -= 0.25;
+    else v.playbackRate = 0.01;
+  },
+
+  fast: function(v,key,shift){
+    v.playbackRate += 0.25;
+  },
+
+  normalSpeed: function(v,key,shift){
+    v.playbackRate = v.defaultPlaybackRate;
+  },
+
+  toPercentage: function(v,key){
+    v.currentTime = v.duration * (key - 48) / 10.0;
+  },
+};
+
+const keyFuncs = {
+  32 : shortcutFuncs.togglePlay,      // Space
+  75 : shortcutFuncs.togglePlay,      // K
+  35 : shortcutFuncs.toEnd,           // End
+  48 : shortcutFuncs.toStart,         // 0
+  36 : shortcutFuncs.toStart,         // Home
+  37 : shortcutFuncs.skipLeft,        // Left arrow
+  74 : shortcutFuncs.skipLeft,        // J
+  39 : shortcutFuncs.skipRight,       // Right arrow
+  76 : shortcutFuncs.skipRight,       // L
+  38 : shortcutFuncs.increaseVol,     // Up arrow
+  40 : shortcutFuncs.decreaseVol,     // Down arrow
+  77 : shortcutFuncs.toggleMute,      // M
+  70 : shortcutFuncs.toggleFS,        // F
+  67 : shortcutFuncs.toggleCaptions,  // C
+  188: shortcutFuncs.slow,            // Comma
+  190: shortcutFuncs.fast,            // Period
+  191: shortcutFuncs.normalSpeed,     // Forward slash
+  49 : shortcutFuncs.toPercentage,    // 1
+  50 : shortcutFuncs.toPercentage,    // 2
+  51 : shortcutFuncs.toPercentage,    // 3
+  52 : shortcutFuncs.toPercentage,    // 4
+  53 : shortcutFuncs.toPercentage,    // 5
+  54 : shortcutFuncs.toPercentage,    // 6
+  55 : shortcutFuncs.toPercentage,    // 7
+  56 : shortcutFuncs.toPercentage,    // 8
+  57 : shortcutFuncs.toPercentage,    // 9
+};
+
 function MVUniversal() {}
 MVUniversal.prototype={
   topTags: [],
@@ -440,7 +610,54 @@ window.addEventListener('message', e => {
 window.addEventListener('keydown', event => {
   if(event.key === 'Escape' && mvImpl.status === 'selectVideo') {
     chrome.runtime.sendMessage({action: 'cancelSelectMode'});
+  } else if (mvImpl.status === 'maximaVideo') {
+    if(event.altKey || event.metaKey){
+      return true;
+    }
+    const func = keyFuncs[event.keyCode];
+    if(func){
+      //send message to background script !
+      //func(mvImpl.mainNode, event.keyCode, event.shiftKey, event.ctrlKey);
+      if(event.keyCode === 70) {// fullscreen
+        mvImpl.mainNode.requestFullscreen();
+      }
+      else {
+        let msg = {action: 'videoHotkey', keyCode: event.keyCode, shiftKey: event.shiftKey, ctrlKey: event.ctrlKey};
+        chrome.runtime.sendMessage(msg);
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+      return false;
+    }
+    return true;
   }
+}, true);
+
+const handleKeyEvent = (event) => {
+  if (mvImpl.status === 'maximaVideo') {
+    if(event.altKey || event.metaKey){
+      return true;
+    }
+    const func = keyFuncs[event.keyCode];
+    if(func){
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+      return false;
+    }
+    return true;
+  }
+}
+window.addEventListener('keypress', handleKeyEvent, true);
+window.addEventListener('keyup', handleKeyEvent, true);
+window.addEventListener('DOMContentLoaded', event => {
+  document.addEventListener('fullscreenchange', event => {
+    if (mvImpl.status === 'maximaVideo') {
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+    }
+  }, true);
 });
 
 function inRect(point, rect) {
@@ -571,7 +788,13 @@ function setHideCursorTimer() {
 }
 
 chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
-  if(message.action === 'maximizeVideo') {
+  if(message.action === 'videoHotkey') {
+    if(mvImpl.mainNode.tagName === 'VIDEO') {
+      const func = keyFuncs[message.keyCode];
+      func(mvImpl.mainNode, message.keyCode, message.shiftKey, message.ctrlKey);
+    }
+  }
+  else if(message.action === 'maximizeVideo') {
     if(mvImpl.status === 'maximaVideo')
       return;
     mvImpl.status = 'maximaVideo';
@@ -597,6 +820,9 @@ chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
       }
       mvImpl.strict = message.strict;
       maximizeVideo(elem);
+      if(mvImpl.mainNode.tagName === 'VIDEO') {
+        mvImpl.mainNode.focus({preventScroll:true});
+      }
       chrome.runtime.sendMessage({action: 'popupWindow'});
     }
   }

@@ -75,16 +75,8 @@
     "message": "White",
     "description": ""
   },
-  "hotkey": {
-    "message": "Keyboard shortcut",
-    "description": ""
-  },
-  "invalidSetting": {
-    "message": "invalid setting",
-    "description": ""
-  },
-  "disableHotkey": {
-    "message": "Disable shortcut",
+  "execute": {
+    "message": "Maximize video",
     "description": ""
   }
 }

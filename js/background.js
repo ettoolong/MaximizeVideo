@@ -11,8 +11,7 @@ let defaultPreference = {
   autoHideCursor: false,
   delayForHideCursor: 5,
   iconColor: 0,
-  shortcut: 'Ctrl+Shift+M',
-  version: 5
+  version: 6
 };
 let preferences = {};
 
@@ -37,9 +36,6 @@ const storageChangeHandler = (changes, area) => {
       switch (item) {
         case 'iconColor':
           setBrowserActionIcon();
-          break;
-        case 'shortcut':
-          applyCommand();
           break;
       }
     }
@@ -74,7 +70,6 @@ const loadPreference = () => {
       }
     }
     setBrowserActionIcon();
-    applyCommand();
   });
 };
 
@@ -94,23 +89,6 @@ chrome.browserAction.disable();
 chrome.browserAction.onClicked.addListener(tab => {
   execBrowserAction(tab);
 });
-
-const applyCommand = () => {
-  let keys = preferences.shortcut.split('+');
-  if(keys.length !== 3) keys = defaultPreference.shortcut.split('+');
-  let shortcut = keys.filter(item => item).join('+');
-  try {
-    if(shortcut !== '') {
-      browser.commands.update({
-        name: 'maximizeVideo',
-        shortcut: shortcut
-      });
-    }
-    else {
-      browser.commands.reset('maximizeVideo');
-    }
-  } catch(ex){}
-};
 
 const execBrowserAction = (tab) => {
   if(!['about:addons', 'about:blank'].includes(tab.url)) {
@@ -216,6 +194,14 @@ const messageHandler = (message, sender, sendResponse) => {
   else if(message.action === 'cancelMaximaMode'){
     chrome.tabs.sendMessage(sender.tab.id, {
       action: 'cancelMaximaMode'
+    });
+  }
+  else if(message.action === 'videoHotkey'){
+    chrome.tabs.sendMessage(sender.tab.id, {
+      action: 'videoHotkey',
+      keyCode: message.keyCode,
+      shiftKey: message.shiftKey,
+      ctrlKey: message.ctrlKey
     });
   }
   //return true;
