@@ -171,6 +171,15 @@ const keyFuncs = {
   57 : shortcutFuncs.toPercentage,    // 9
 };
 
+const srcProxy = {
+  'bleacherreport.com': {
+    play: (node) => {
+      let elem = node.parentNode.parentNode.querySelector('.amp-interactive');
+      elem.click();
+    }
+  }
+}
+
 function MVUniversal() {}
 MVUniversal.prototype={
   topTags: [],
@@ -215,6 +224,15 @@ MVUniversal.prototype={
       node.addEventListener('mouseup', event => {
         if(this.status === 'maximaVideo')
           event.stopImmediatePropagation();
+      }, true);
+      node.addEventListener('play', event => {
+        if (!node.src) {
+          let proxy = srcProxy[window.location.host]
+          if (proxy) {
+            event.preventDefault();
+            proxy.play(node);
+          }
+        }
       }, true);
     }
   }
