@@ -78,5 +78,9 @@
   "execute": {
     "message": "影片最大化",
     "description": ""
+  },
+  "youtubeControllers": {
+    "message": "在 Youtube 網站使用原有的播放器控制列",
+    "description": ""
   }
 }

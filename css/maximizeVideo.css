@@ -39,8 +39,16 @@
   opacity: 1 !important;
 }
 
+.hover-display[mvclass=core] {
+  width: 100% !important;
+}
+
 .hover-display[mvclass=core]:hover {
   opacity: 1 !important;
+}
+
+.hover-display[mvclass=core] .pl-pinned-panel {
+  display: none !important;
 }
 
 html[mvclass=core],
@@ -82,4 +90,8 @@ body[mvclass=show-t] {
 
 .mvVideoBlock:hover {
   opacity: 0.5;
+}
+
+[mvclass="show-t"] [data-a-target="player-settings-submenu-advanced-toggle-mini"] {
+  display:none !important;
 }

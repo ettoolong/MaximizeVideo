@@ -2,7 +2,7 @@
   "description": "__MSG_extDescription__",
   "manifest_version": 2,
   "name": "__MSG_extName__",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "homepage_url": "https://github.com/ettoolong/MaximizeVideo",
   "icons": {
     "16": "icon/icon.svg",
@@ -11,7 +11,7 @@
     "64": "icon/icon.svg",
     "96": "icon/icon.svg"
   },
-  "applications": {
+  "browser_specific_settings": {
     "gecko": {
       "id": "MaximizeVideo@ettoolong",
       "strict_min_version": "66.0"
@@ -31,6 +31,13 @@
       "js": ["js/content-script.js"],
       "css": ["css/maximizeVideo.css"],
       "all_frames": true,
+      "run_at": "document_start"
+    },
+    {
+      "matches": ["https://www.youtube.com/*"],
+      "js": ["js/ytb.js"],
+      "css": ["css/ytb.css"],
+      "all_frames": false,
       "run_at": "document_start"
     }
   ],

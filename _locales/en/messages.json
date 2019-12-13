@@ -78,5 +78,9 @@
   "execute": {
     "message": "Maximize video",
     "description": ""
+  },
+  "youtubeControllers": {
+    "message": "Keep original video controls on Youtube",
+    "description": ""
   }
 }

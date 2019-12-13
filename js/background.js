@@ -11,7 +11,8 @@ let defaultPreference = {
   autoHideCursor: false,
   delayForHideCursor: 5,
   iconColor: 0,
-  version: 6
+  youtubeControllers: false,
+  version: 7
 };
 let preferences = {};
 
@@ -185,16 +186,40 @@ const messageHandler = (message, sender, sendResponse) => {
     });
   }
   else if(message.action === 'maximizeVideo'){
-    chrome.tabs.sendMessage(sender.tab.id, {
-      action: 'maximizeVideo',
-      hashCode: message.hashCode,
-      strict: message.strict
-    });
+    const exec = ({youtubeControllers}) => {
+      chrome.tabs.sendMessage(sender.tab.id, {
+        action: 'maximizeVideo',
+        hashCode: message.hashCode,
+        strict: message.strict,
+        youtubeControllers
+      });
+    }
+
+    if (preferences.youtubeControllers && sender.tab.url.startsWith('https://www.youtube.com/watch')) {
+      exec({youtubeControllers: true})
+      chrome.tabs.sendMessage(sender.tab.id, {
+        action: 'maximizeVideo-ytb',
+      });
+    } else {
+      exec({youtubeControllers: false})
+    }
   }
   else if(message.action === 'cancelMaximaMode'){
-    chrome.tabs.sendMessage(sender.tab.id, {
-      action: 'cancelMaximaMode'
-    });
+    const exec = ({youtubeControllers}) => {
+      chrome.tabs.sendMessage(sender.tab.id, {
+        action: 'cancelMaximaMode',
+        youtubeControllers
+      });
+    }
+
+    if (preferences.youtubeControllers && sender.tab.url.startsWith('https://www.youtube.com/watch')) {
+      exec({youtubeControllers: true})
+      chrome.tabs.sendMessage(sender.tab.id, {
+        action: 'cancelMaximaMode-ytb',
+      });
+    } else {
+      exec({youtubeControllers: false})
+    }
   }
   else if(message.action === 'videoHotkey'){
     chrome.tabs.sendMessage(sender.tab.id, {

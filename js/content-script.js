@@ -180,11 +180,36 @@ const srcProxy = {
   }
 }
 
+const setMiniPlayer = (impl, disable) => {
+  const settingsButton = document.querySelector('[data-a-target="player-settings-button"]');
+  try {
+    settingsButton.click();
+    document.querySelector('[data-a-target="player-settings-menu-item-advanced"]').click();
+    const menuItem = document.querySelector('[data-a-target="player-settings-submenu-advanced-toggle-mini"]');
+    const input = menuItem.querySelector('input');
+    if (disable) {
+      if (input.checked) {
+        impl.miniPlayer = true;
+        input.click();
+      }
+    } else {
+      if (!!impl.miniPlayer && !input.checked) {
+        input.click();
+      }
+    }
+  } catch (e) {
+  } finally {
+    settingsButton.click();
+  }
+}
+
 function MVUniversal() {}
 MVUniversal.prototype={
   topTags: [],
   mvClass: 'show',
   setCoreNode: function () {
+  },
+  restoreCoreNode: function () {
   },
   getMainNode: function (node) {
     return node;
@@ -243,19 +268,16 @@ MVTwitch.prototype={
   topTags: ['body', 'html'],
   mvClass: 'show-t',
   setCoreNode: function () {
-    let coreNode = document.querySelector('.pl-controls-bottom');
-    if(!coreNode) {
-      coreNode = document.querySelector('.player-controls-bottom');
-    }
+    let coreNode = document.querySelector('.player-controls');
     coreNode.parentNode.setAttribute('mvclass', 'core');
     coreNode.setAttribute('mvclass', 'core');
-    let streamstatus = document.querySelector('.player-streamstatus');
-    if(streamstatus) {
-      streamstatus.setAttribute('mvclass', 'core');
-    }
+    setMiniPlayer(this, true);
+  },
+  restoreCoreNode: function () {
+    setMiniPlayer(this, false);
   },
   getMainNode: function (node) {
-    return document.querySelector('.video-player .video-player__container');
+    return document.querySelector('.video-player__container');
   },
   setControllers: function (show, node) {
   },
@@ -269,19 +291,16 @@ MVETwitch.prototype={
   mvClass: 'show-t',
   setCoreNode: function () {
     let controlsNode = document.querySelector('.pl-controls-bottom');
-    if(!controlsNode) {
-      controlsNode = document.querySelector('.player-controls-bottom');
-    }
     controlsNode.setAttribute('mvclass', 'core');
     controlsNode.parentNode.setAttribute('mvclass', 'core');
-    let streamstatus = document.querySelector('.player-streamstatus');
-    if(streamstatus) {
-      streamstatus.setAttribute('mvclass', 'core');
-    }
+    let hoverDisplay = document.querySelector('.hover-display');
+    hoverDisplay.setAttribute('mvclass', 'core');
     let playerui = document.querySelector('.player-ui');
     if(playerui) {
       playerui.setAttribute('mvclass', 'core');
     }
+  },
+  restoreCoreNode: function () {
   },
   getMainNode: function (node) {
     return node;
@@ -298,6 +317,8 @@ MVNetflix.prototype={
   mvClass: 'show-t',
   setCoreNode: function () {
     document.querySelector('.controls').setAttribute('mvclass', 'core');
+  },
+  restoreCoreNode: function () {
   },
   getMainNode: function (node) {
     return node;
@@ -366,6 +387,13 @@ function getHashCode(length) {
   return hashCode;
 }
 let selfId = getHashCode(HASHCODE_LENGTH);
+
+function isYoutubeEmbed () {
+  return window.location.href.startsWith('https://www.youtube.com/embed/');
+}
+function isYoutubeWatch () {
+  return window.location.href.startsWith('https://www.youtube.com/watch');
+}
 
 function addToMvCover (elemInfo) {
   // console.log('[addToMvCover] ' + JSON.stringify(elemInfo, null, 4));
@@ -513,7 +541,10 @@ function maximizeMainNode() {
 };
 
 function restoreVideo() {
-  mvImpl.setControllers(false);
+  if (!mvImpl.selectedNode) return;
+  if (!mvImpl.youtubeControllers || (!isYoutubeEmbed() && !isYoutubeWatch())) {
+    mvImpl.setControllers(false);
+  }
   lockMainNodeStyle(false);
   mvImpl.mainNode.setAttribute('style', mvImpl.originalStyle);
 
@@ -544,13 +575,17 @@ function maximizeVideo(selectedNode) {
   };
 
   mvImpl.selectedNode = selectedNode;
-  mvImpl.setControllers(true);
+  if (!mvImpl.youtubeControllers || (!isYoutubeEmbed() && !isYoutubeWatch())) {
+    mvImpl.setControllers(true);
+  }
   mvImpl.mainNode = mvImpl.getMainNode(selectedNode);
   if(window !== window.top) { //this video is in iframe
     window.parent.postMessage({action: 'getId', senderId: selfId, nextAction: 'setVideoNode'},'*');
   }
   mvImpl.registerEvents(mvImpl.mainNode);
-  hideAllSibling(mvImpl.mainNode);
+  if (!mvImpl.youtubeControllers || (!isYoutubeEmbed() && !isYoutubeWatch())) {
+    hideAllSibling(mvImpl.mainNode);
+  }
   maximizeMainNode();
 }
 
@@ -671,7 +706,7 @@ window.addEventListener('keypress', handleKeyEvent, true);
 window.addEventListener('keyup', handleKeyEvent, true);
 window.addEventListener('DOMContentLoaded', event => {
   document.addEventListener('fullscreenchange', event => {
-    if (mvImpl.status === 'maximaVideo') {
+    if (mvImpl.status === 'maximaVideo' && !mvImpl.youtubeControllers && !mvImpl instanceof MVTwitch && !mvImpl instanceof MVETwitch) {
       event.stopPropagation();
       event.stopImmediatePropagation();
     }
@@ -706,7 +741,7 @@ function isVisible(elem, elemRect) {
 
 function getElemInfo(elem) {
   let elemRect = elem.getBoundingClientRect();
-  if(window.location.href.startsWith('https://www.youtube.com/embed/') && !elem.src) {
+  if(isYoutubeEmbed() && !elem.src) {
     let newElemRect = {
       bottom: elemRect.bottom,
       height: elemRect.height,
@@ -830,7 +865,8 @@ chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
       });
       mvImpl.setCoreNode();
       mvImpl.currentHashCode = message.hashCode;
-      if(window.location.href.startsWith('https://www.youtube.com/embed/') && !elem.src) {
+      mvImpl.youtubeControllers = message.youtubeControllers;
+      if(isYoutubeEmbed() && !elem.src) {
         elem.click();
         elem.addEventListener('progress', ()=>{
           elem.pause();
@@ -912,6 +948,7 @@ chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
   }
   else if(message.action === 'cancelMaximaMode') {
     mvImpl.status = 'normal';
+    mvImpl.restoreCoreNode();
     restoreVideo();
   }
   return true;
