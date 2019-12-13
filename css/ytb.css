@@ -1,0 +1,32 @@
+body.mvytp {
+  overflow: hidden !important;
+}
+
+body.mvytp .ytp-size-button {
+  display: none !important;
+}
+
+body.mvytp #movie_player {
+  position: fixed !important;
+  /* z-index: 999999999999 !important; */
+  z-index: 2100 !important;
+  bottom: 0px !important;
+  right: 0px !important;
+  left: 0px !important;
+  top: 0px !important;
+}
+
+body.mvytp .html5-video-container {
+  height: 100% !important;
+  width: 100% !important;
+}
+
+body.mvytp .html5-video-container .html5-main-video {
+  height: 100% !important;
+  width: 100% !important;
+  bottom: 0px !important;
+  right: 0px !important;
+  left: 0px !important;
+  top: 0px !important;
+  background: #000 !important;
+}

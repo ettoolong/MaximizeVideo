@@ -39,8 +39,16 @@
   opacity: 1 !important;
 }
 
+.hover-display[mvclass=core] {
+  width: 100% !important;
+}
+
 .hover-display[mvclass=core]:hover {
   opacity: 1 !important;
+}
+
+.hover-display[mvclass=core] .pl-pinned-panel {
+  display: none !important;
 }
 
 html[mvclass=core],
@@ -84,14 +92,53 @@ body[mvclass=show-t] {
   opacity: 0.5;
 }
 
+[mvclass="show-t"] [data-a-target="player-settings-submenu-advanced-toggle-mini"] {
+  display:none !important;
+}
+
 /* ref: https://chromium.googlesource.com/chromium/blink/+/72fef91ac1ef679207f51def8133b336a6f6588f/Source/core/css/mediaControls.css */
-video::-webkit-media-controls {
+/* ref: https://chromium.googlesource.com/chromium/src/third_party/+/master/blink/renderer/modules/media_controls/resources/modernMediaControls.css */
+
+/* -webkit-media-controls */
+video[mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core]::-webkit-media-controls {
   width: inherit !important;
   height: inherit !important;
-  position: relative !important;
+  position: relative;
   direction: ltr !important;
   display: flex !important;
   flex-direction: column !important;
   justify-content: flex-end !important;
   align-items: center !important;
+}
+
+/* -webkit-media-controls-fullscreen-button */
+/* video[mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core]::-webkit-media-controls-fullscreen-button {
+  display: flex !important;
+} */
+
+/* -webkit-internal-media-controls-download-button */
+video[mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core]::-internal-media-controls-download-button {
+  display: flex !important;
+}
+
+/* -webkit-media-controls-panel */
+video[mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core]::-webkit-media-controls-panel {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  position: absolute !important;
+  bottom: 0px !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* -webkit-media-controls-enclosure */
+video[mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core]::-webkit-media-controls-enclosure {
+	overflow: auto !important;
+}
+
+
+video[mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core][mvclass=core]::-webkit-media-controls-timeline {
+	width: calc(100% - 32px) !important;
 }
