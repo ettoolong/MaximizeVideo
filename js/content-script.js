@@ -647,7 +647,7 @@ window.addEventListener('keydown', event => {
   if(event.key === 'Escape' && mvImpl.status === 'selectVideo') {
     chrome.runtime.sendMessage({action: 'cancelSelectMode'});
   } else if (mvImpl.status === 'maximaVideo') {
-    if(event.altKey || event.metaKey){
+    if (event.altKey || event.metaKey || event.ctrlKey) {
       return true;
     }
     const func = keyFuncs[event.keyCode];
