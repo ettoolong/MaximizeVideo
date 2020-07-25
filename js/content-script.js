@@ -387,6 +387,7 @@ function getHashCode(length) {
   return hashCode;
 }
 let selfId = getHashCode(HASHCODE_LENGTH);
+window.selfId = selfId;
 
 function isYoutubeEmbed () {
   return window.location.href.startsWith('https://www.youtube.com/embed/');

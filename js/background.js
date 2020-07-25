@@ -162,6 +162,20 @@ const messageHandler = (message, sender, sendResponse) => {
   if(message.action === 'tabReady'){
     chrome.browserAction.enable(sender.tab.id);
   }
+  else if(message.action === 'execContentScript'){
+    chrome.tabs.executeScript(sender.tab.Id, {
+      file: 'js/content-script.js',
+      frameId: sender.frameId,
+      runAt: 'document_end'
+    }, () => {
+      chrome.tabs.sendMessage(sender.tab.id, {
+        action: 'scanVideo',
+        supportFlash: message.supportFlash !== undefined ? message.supportFlash : preferences.supportFlash,
+        minWidth: message.minWidth !== undefined ? message.minWidth : preferences.minWidth,
+        minHeight: message.minHeight !== undefined ? message.minHeight : preferences.minHeight
+      }, {frameId: sender.frameId});
+    });
+  }
   else if(message.action === 'popupWindow'){
     if(preferences.popupWindow) {
       chrome.runtime.sendMessage('PopupWindow@ettoolong',
@@ -172,6 +186,10 @@ const messageHandler = (message, sender, sendResponse) => {
     }
   }
   else if(message.action === 'scanVideo'){
+    chrome.tabs.executeScript(sender.tab.Id, {
+      code: '(function(){if(window !== window.top && !window.selfId) chrome.runtime.sendMessage({action: "execContentScript"})})();',
+      allFrames: true
+    });
     chrome.tabs.sendMessage(sender.tab.id, {
       action: 'scanVideo',
       hashCode: message.hashCode,
