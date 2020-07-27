@@ -349,14 +349,13 @@ let vnStyle = [
   'border-width:0 !important;',
   'cursor:default !important;',
   'object-fit:contain !important;',
-  'z-index: 2147483639 !important;',
-  'background:black !important;'].join('');
+  'z-index: 2147483639 !important;'].join('');
 let vnStyleList = [
   'position', 'top', 'left', 'min-width',
   'min-height', 'width', 'height',
   'max-width', 'max-height', 'margin',
   'padding', 'visibility', 'border-width',
-  'cursor', 'background'];
+  'cursor'];
 
 if(window.location.href.startsWith('https://www.twitch.tv/')) {
   mvImpl = new MVTwitch();
