@@ -477,34 +477,125 @@ function addToMvCover (elemInfo) {
   }
 }
 
+function throttle(callback) {
+  let pending = false;
+  let frameId = null;
+  let lastArgs;
+  const throttled = ((...args) => {
+      lastArgs = args;
+      if (frameId) {
+          pending = true;
+      }
+      else {
+          callback(...lastArgs);
+          frameId = requestAnimationFrame(() => {
+              frameId = null;
+              if (pending) {
+                  callback(...lastArgs);
+                  pending = false;
+              }
+          });
+      }
+  });
+  const cancel = () => {
+      cancelAnimationFrame(frameId);
+      pending = false;
+      frameId = null;
+  };
+  return Object.assign(throttled, { cancel });
+}
+
+function getDuration(time) {
+  let duration = 0;
+  if (time.seconds) {
+      duration += time.seconds * 1000;
+  }
+  if (time.minutes) {
+      duration += time.minutes * 60 * 1000;
+  }
+  if (time.hours) {
+      duration += time.hours * 60 * 60 * 1000;
+  }
+  if (time.days) {
+      duration += time.days * 24 * 60 * 60 * 1000;
+  }
+  return duration;
+}
+
+function watchForNodePosition(node) {
+  const MAX_ATTEMPTS_COUNT = 10;
+  const RETRY_TIMEOUT = getDuration({ seconds: 2 });
+  const ATTEMPTS_INTERVAL = getDuration( { seconds: 10 });
+  let currentstyle = node.getAttribute('style');
+  let attempts = 0;
+  let start = null;
+  let timeoutId = null;
+  const restore = throttle(() => {
+      if (timeoutId) {
+          return;
+      }
+      attempts++;
+      const now = Date.now();
+      if (start == null) {
+          start = now;
+      }
+      else if (attempts >= MAX_ATTEMPTS_COUNT) {
+          if (now - start < ATTEMPTS_INTERVAL) {
+              logWarn(`retry in ${RETRY_TIMEOUT}ms`, node, prevSibling);
+              timeoutId = setTimeout(() => {
+                  start = null;
+                  attempts = 0;
+                  timeoutId = null;
+                  restore();
+              }, RETRY_TIMEOUT);
+              return;
+          }
+          start = now;
+          attempts = 1;
+      }
+      
+      updateStyle(mvImpl.vnNewStyle);
+      observer.takeRecords();
+  });
+  const observer = new MutationObserver(() => {
+      if (currentstyle !== mvImpl.vnNewStyle) {
+          restore();
+      }
+  });
+  const run = () => {
+      observer.observe(node, { attributes: true, attributeFilter: ['style']});
+  };
+  const stop = () => {
+      clearTimeout(timeoutId);
+      observer.disconnect();
+  };
+  
+  const updateStyle = (style) => {
+      node.setAttribute('style', style);
+      currentstyle = style;
+      stop();
+      run();
+  };
+  run();
+  return {run, stop, observer};
+}
+
 function lockMainNodeStyle(lock) {
-  if(lock) {
-    if(mvImpl.strict) {
+  const watcher = watchForNodePosition(mvImpl.mainNode);
+  if (lock) {
+    if (mvImpl.strict) {
       //no way to unlock.
       let script = document.createElement('script');
       script.setAttribute('id','mvLockScript');
       script.textContent = '(function(){Object.defineProperty(document.querySelector("[mvHashCode='+mvImpl.currentHashCode+']"), "style", {configurable: false});document.head.removeChild(document.getElementById("mvLockScript"));})()';
       document.head.appendChild(script);
+    } else {
+      watcher.run();
+      mvImpl.mainNodeObserver = watcher.observer;
     }
-    else {
-      let observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-          let n = mutation.target;
-          let currentStyle = n.getAttribute('style');
-          if(currentStyle !== mvImpl.vnNewStyle) {
-            n.setAttribute('style', mvImpl.vnNewStyle);
-          }
-        });
-      });
-      let config = { attributes: true, attributeFilter: ['style']};
-      observer.observe(mvImpl.mainNode, config);
-      mvImpl.mainNodeObserver = observer;
-    }
-  }
-  else {
-    if(mvImpl.mainNodeObserver) {
-      mvImpl.mainNodeObserver.disconnect();
-      mvImpl.mainNodeObserver = null;
+  } else {
+    if (mvImpl.mainNodeObserver) {
+      watcher.stop();
     }
   }
 }
