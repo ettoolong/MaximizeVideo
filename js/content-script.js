@@ -350,13 +350,13 @@ let vnStyle = [
   'cursor:default !important;',
   'object-fit:contain !important;',
   'z-index: 2147483639 !important;',
-  'background:black !important;'].join('');
+].join('');
 let vnStyleList = [
   'position', 'top', 'left', 'min-width',
   'min-height', 'width', 'height',
   'max-width', 'max-height', 'margin',
   'padding', 'visibility', 'border-width',
-  'cursor', 'background'];
+  'cursor'];
 
 if(window.location.href.startsWith('https://www.twitch.tv/')) {
   mvImpl = new MVTwitch();
@@ -511,29 +511,36 @@ function lockMainNodeStyle(lock) {
 
 function maximizeMainNode() {
   let originalStyle = mvImpl.originalStyle = (mvImpl.mainNode.getAttribute('style') || '');
+  let noBgImage = window.getComputedStyle(mvImpl.mainNode, null).backgroundImage === 'none';
+  let fixedStyle = vnStyle;
+  let fixedStyleList = noBgImage ? [...vnStyleList, 'background-image', 'background-repeat'] : [...vnStyleList]
+  if (noBgImage) {
+    fixedStyle += 'background-repeat: repeat !important;background-image: url("data:image/bmp;base64,Qk06AAAAAAAAADYAAAAoAAAAAQAAAP////8BACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/w=="); !important;';
+  }
   let vnNewStyle = '';
   originalStyle = originalStyle.trim().replace(/\r\n/g, '\r').replace(/\n/g, '\r').replace(/\r/g, '');
-  if(originalStyle === '') {
-    vnNewStyle = vnStyle;
+  if (originalStyle === '') {
+    vnNewStyle = fixedStyle;
   }
   else {
     let styles = originalStyle.split(';');
     let slist = [];
-    for(let s of styles) {
+    for (let s of styles) {
       let t = /([a-zA-Z-]{2,})\s?:\s?(.+)/;
       if(t.test(s)) {
         let m = s.split(t);
         let key = m[1];
         let value = m[2];
-        if(!vnStyleList.includes(key))
+        if (!fixedStyleList.includes(key)) {
           slist.push(key+':'+value);
+        }
       }
     }
-    if(slist.length === 0) {
-      vnNewStyle = vnStyle;
+    if (slist.length === 0) {
+      vnNewStyle = fixedStyle;
     }
     else {
-      vnNewStyle = vnStyle + slist.join(';')+';';
+      vnNewStyle = fixedStyle + slist.join(';')+';';
     }
   }
   mvImpl.vnNewStyle = vnNewStyle;
