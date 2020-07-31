@@ -2,7 +2,7 @@
   "description": "__MSG_extDescription__",
   "manifest_version": 2,
   "name": "__MSG_extName__",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "homepage_url": "https://github.com/ettoolong/MaximizeVideo",
   "icons": {
     "16": "icon/icon.png",
@@ -38,8 +38,7 @@
     "default_icon": "icon/icon_b.png"
   },
   "permissions": [
-    "storage",
-    "tabs"
+    "storage"
   ],
   "default_locale": "en",
   "options_ui": {
