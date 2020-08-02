@@ -440,7 +440,7 @@ function addToMvCover (elemInfo) {
       if(event.button === 0) {
         event.stopImmediatePropagation();
         event.preventDefault();
-        let msg = {action: 'maximizeVideo', hashCode: elemInfo.hashCode};
+        let msg = {action: 'maximizeVideo', url: window.location.href, hashCode: elemInfo.hashCode};
         try{
           if(event.shiftKey && event.layerX < 10 && event.layerY < 10 ) msg.strict = true;
         } catch (ex){}
@@ -472,7 +472,7 @@ function addToMvCover (elemInfo) {
     }
     if(selected) {
       mvImpl.toolbarAction = 0;
-      chrome.runtime.sendMessage({action: 'maximizeVideo', hashCode: selected.getAttribute('mvMaskHash')});
+      chrome.runtime.sendMessage({action: 'maximizeVideo', url: window.location.href, hashCode: selected.getAttribute('mvMaskHash')});
     }
   }
 }
@@ -923,7 +923,7 @@ chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
       }
       else if(mvImpl.status === 'maximaVideo') {
         clearHideCursorTimer();
-        chrome.runtime.sendMessage({action: 'cancelMaximaMode'});
+        chrome.runtime.sendMessage({action: 'cancelMaximaMode', url: window.location.href});
       }
     }
   }
