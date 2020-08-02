@@ -213,7 +213,7 @@ const messageHandler = (message, sender, sendResponse) => {
       });
     }
 
-    if (preferences.youtubeControllers && sender.tab.url.startsWith('https://www.youtube.com/watch')) {
+    if (preferences.youtubeControllers && message.url.startsWith('https://www.youtube.com/watch')) {
       exec({youtubeControllers: true})
       chrome.tabs.sendMessage(sender.tab.id, {
         action: 'maximizeVideo-ytb',
@@ -230,7 +230,7 @@ const messageHandler = (message, sender, sendResponse) => {
       });
     }
 
-    if (preferences.youtubeControllers && sender.tab.url.startsWith('https://www.youtube.com/watch')) {
+    if (preferences.youtubeControllers && message.url.startsWith('https://www.youtube.com/watch')) {
       exec({youtubeControllers: true})
       chrome.tabs.sendMessage(sender.tab.id, {
         action: 'cancelMaximaMode-ytb',
