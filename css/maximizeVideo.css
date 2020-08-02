@@ -25,6 +25,11 @@
   will-change:auto !important;
 }
 
+video[mvclass=core] {
+  background-image: url("data:image/bmp;base64,Qk06AAAAAAAAADYAAAAoAAAAAQAAAP////8BACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/w==") !important;
+  background-repeat: repeat !important;
+}
+
 .controls[mvclass=core],
 .hover-display[mvclass=core],
 .pl-controls-bottom[mvclass=core],
