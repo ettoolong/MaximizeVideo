@@ -515,7 +515,7 @@ function maximizeMainNode() {
   let fixedStyle = vnStyle;
   let fixedStyleList = noBgImage ? [...vnStyleList, 'background-image', 'background-repeat'] : [...vnStyleList]
   if (noBgImage) {
-    fixedStyle += 'background-repeat: repeat !important;background-image: url("data:image/bmp;base64,Qk06AAAAAAAAADYAAAAoAAAAAQAAAP////8BACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/w=="); !important;';
+    fixedStyle += 'background-repeat: repeat !important;background-image: url("data:image/bmp;base64,Qk06AAAAAAAAADYAAAAoAAAAAQAAAP////8BACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/w==") !important;';
   }
   let vnNewStyle = '';
   originalStyle = originalStyle.trim().replace(/\r\n/g, '\r').replace(/\n/g, '\r').replace(/\r/g, '');
