@@ -23,6 +23,8 @@
   -webkit-transformStyle:flat !important;
   border-width:0px !important;
   will-change:auto !important;
+  mask-image: unset !important;
+  -webkit-mask-image: unset !important;
 }
 
 video[mvclass=core] {
