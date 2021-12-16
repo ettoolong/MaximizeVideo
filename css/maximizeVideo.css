@@ -28,8 +28,7 @@
 }
 
 video[mvclass=core] {
-  background-image: url("data:image/bmp;base64,Qk06AAAAAAAAADYAAAAoAAAAAQAAAP////8BACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/w==") !important;
-  background-repeat: repeat !important;
+  background-color:black;
 }
 
 .controls[mvclass=core],
