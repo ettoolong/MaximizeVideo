@@ -25,6 +25,7 @@
   will-change:auto !important;
   mask-image: unset !important;
   -webkit-mask-image: unset !important;
+  container-type: normal !important;
 }
 
 video[mvclass=core] {

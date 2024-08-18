@@ -215,10 +215,10 @@ MVUniversal.prototype={
         this.original[attribute] = node.hasAttribute(attribute) ? node.getAttribute(attribute) : null;
         node.setAttribute(attribute, 'true');
       }
-      let script = document.createElement('script');
-      script.setAttribute('id','mvScript');
-      script.textContent = '(function(){Object.defineProperty(document.querySelector("video[mvHashCode='+this.currentHashCode+']"), "'+attribute+'", {configurable: false});document.head.removeChild(document.getElementById("mvScript"));})()';
-      document.head.appendChild(script);
+      // let script = document.createElement('script');
+      // script.setAttribute('id','mvScript');
+      // script.textContent = '(function(){Object.defineProperty(document.querySelector("video[mvHashCode='+this.currentHashCode+']"), "'+attribute+'", {configurable: false});document.head.removeChild(document.getElementById("mvScript"));})()';
+      // document.head.appendChild(script);
       if(!show) {
         if(this.original[attribute] !== null)
           node.setAttribute(attribute, this.original[attribute]);
@@ -321,8 +321,12 @@ let vnStyle = [
   'left:0 !important;',
   'min-width:0 !important;',
   'min-height:0 !important;',
-  'width:100% !important;',
-  'height:100% !important;',
+  'min-width:100vw !important;',
+  'min-height:100vh !important;',
+  'width:100vw !important;',
+  'height:100vh !important;',
+  'max-width:100vw !important;',
+  'max-height:100vh !important;',
   'max-width:100% !important;',
   'max-height:100% !important;',
   'margin:0 !important;',
@@ -779,16 +783,17 @@ function uploadElemInfo(elements, minWidth, minHeight, onlyUpdateNewElem) {
     let elemInfo = getElemInfo(elem);
     if(elemInfo.width >= minWidth && elemInfo.height >= minHeight) {
       if(window === window.top) {
-        addToMvCover(elemInfo);
+        addToMvCover(elemInfo); // 是 top window, 直接加進去
       }
       else {
         elemInfos.push(elemInfo);
       }
     }
   }
-  if(window !== window.top && elemInfos.length) {
-    window.parent.postMessage({action: 'getId', senderId: selfId, nextAction: 'addVideoElements', extDate: elemInfos},'*');
-  }
+  // TODO: Need fix this
+  // if(window !== window.top && elemInfos.length) {
+  //   window.parent.postMessage({action: 'getId', senderId: selfId, nextAction: 'addVideoElements', extDate: elemInfos},'*');
+  // }
 }
 
 function removeVideoMask() {
@@ -890,7 +895,7 @@ chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
           cover.setAttribute('mvMaskHash', message.hashCode);
           document.body.appendChild(cover);
           let msg = {action: 'scanVideo', hashCode: message.hashCode};
-          if(message.supportFlash !== undefined) msg.supportFlash = message.supportFlash;
+          // if(message.supportFlash !== undefined) msg.supportFlash = message.supportFlash;
           if(message.minWidth !== undefined) msg.minWidth = message.minWidth;
           if(message.minHeight !== undefined) msg.minHeight = message.minHeight;
           chrome.runtime.sendMessage(msg);
@@ -906,27 +911,29 @@ chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
     }
   }
   else if(message.action === 'scanVideo') {
-    mvImpl.status = 'selectVideo';
-    // console.log('scanVideo');
-    let selector = message.supportFlash ? 'video,embed[type="application/x-shockwave-flash"],object[type="application/x-shockwave-flash"]' : 'video';
-    let elements = document.querySelectorAll(selector);
-    const _uploadElemInfo = () => {
-      mvImpl.scanVideoTimer = null;
-      if(mvImpl.status === 'selectVideo'){
-        uploadElemInfo(elements, message.minWidth, message.minHeight );
-        elements = document.querySelectorAll(selector);
-        uploadElemInfo(elements, message.minWidth, message.minHeight, true);
-        mvImpl.scanVideoTimer = setTimeout(_uploadElemInfo, 200);
-      }
-      if(window === window.top && mvImpl.toolbarAction === 1) {
-        let diffTime = new Date() - mvImpl.startScanTime;
-        if(diffTime > 3000) {
-          mvImpl.toolbarAction = 0;
-          chrome.runtime.sendMessage({action: 'cancelSelectMode'});
+    if(window === window.top) {
+      mvImpl.status = 'selectVideo';
+      // console.log('scanVideo');
+      let selector = 'video';
+      let elements = document.querySelectorAll(selector);
+      const _uploadElemInfo = () => {
+        mvImpl.scanVideoTimer = null;
+        if(mvImpl.status === 'selectVideo'){
+          uploadElemInfo(elements, message.minWidth, message.minHeight );
+          elements = document.querySelectorAll(selector);
+          uploadElemInfo(elements, message.minWidth, message.minHeight, true);
+          mvImpl.scanVideoTimer = setTimeout(_uploadElemInfo, 200);
+        }
+        if(window === window.top && mvImpl.toolbarAction === 1) {
+          let diffTime = new Date() - mvImpl.startScanTime;
+          if(diffTime > 3000) {
+            mvImpl.toolbarAction = 0;
+            chrome.runtime.sendMessage({action: 'cancelSelectMode'});
+          }
         }
       }
+      _uploadElemInfo();
     }
-    _uploadElemInfo();
   }
   else if(message.action === 'cancelSelectMode') {
     mvImpl.status = 'normal';
@@ -937,7 +944,7 @@ chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
     mvImpl.restoreCoreNode();
     restoreVideo();
   }
-  return true;
+  return false;
 });
 
 if(window === window.top) {
