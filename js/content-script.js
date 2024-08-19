@@ -961,56 +961,56 @@ chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
     }
   }
   else if(message.action === 'setVideoMask') {
-    if(mvImpl.status === 'normal') {
-      mvImpl.toolbarAction = message.toolbarAction;
-      // console.log('setVideoMask');
-      // console.log(new Date());
-      removeVideoMask();
-      if (document.readyState === 'complete' || document.readyState === 'interactive') {
-        mvImpl.startScanTime = new Date();
-        let cover = document.createElement('DIV');
-        cover.classList.add('mvCover');
-        cover.setAttribute('mvMaskHash', message.hashCode);
-        document.body.appendChild(cover);
-        let msg = {action: 'scanVideo', hashCode: message.hashCode};
-        // if(message.supportFlash !== undefined) msg.supportFlash = message.supportFlash;
-        if(message.minWidth !== undefined) msg.minWidth = message.minWidth;
-        if(message.minHeight !== undefined) msg.minHeight = message.minHeight;
-        chrome.runtime.sendMessage(msg);
+    if(window === window.top) {
+      if(mvImpl.status === 'normal') {
+        mvImpl.toolbarAction = message.toolbarAction;
+        // console.log('setVideoMask');
+        // console.log(new Date());
+        removeVideoMask();
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+          mvImpl.startScanTime = new Date();
+          let cover = document.createElement('DIV');
+          cover.classList.add('mvCover');
+          cover.setAttribute('mvMaskHash', message.hashCode);
+          document.body.appendChild(cover);
+          let msg = {action: 'scanVideo', hashCode: message.hashCode};
+          // if(message.supportFlash !== undefined) msg.supportFlash = message.supportFlash;
+          if(message.minWidth !== undefined) msg.minWidth = message.minWidth;
+          if(message.minHeight !== undefined) msg.minHeight = message.minHeight;
+          chrome.runtime.sendMessage(msg);
+        }
       }
-    }
-    else if(mvImpl.status === 'selectVideo') {
-      chrome.runtime.sendMessage({action: 'cancelSelectMode'});
-    }
-    else if(mvImpl.status === 'maximaVideo') {
-      clearHideCursorTimer();
-      chrome.runtime.sendMessage({action: 'cancelMaximaMode'});
+      else if(mvImpl.status === 'selectVideo') {
+        chrome.runtime.sendMessage({action: 'cancelSelectMode'});
+      }
+      else if(mvImpl.status === 'maximaVideo') {
+        clearHideCursorTimer();
+        chrome.runtime.sendMessage({action: 'cancelMaximaMode'});
+      }
     }
   }
   else if(message.action === 'scanVideo') {
-    if(window === window.top) {
-      mvImpl.status = 'selectVideo';
-      // console.log('scanVideo');
-      const selector = 'video';
-      let elements = findVideoElements(selector)
-      const _uploadElemInfo = () => {
-        mvImpl.scanVideoTimer = null;
-        if(mvImpl.status === 'selectVideo'){
-          uploadElemInfo(elements, message.minWidth, message.minHeight );
-          elements = findVideoElements(selector);
-          uploadElemInfo(elements, message.minWidth, message.minHeight, true);
-          mvImpl.scanVideoTimer = setTimeout(_uploadElemInfo, 200);
-        }
-        if(window === window.top && mvImpl.toolbarAction === 1) {
-          let diffTime = new Date() - mvImpl.startScanTime;
-          if(diffTime > 3000) {
-            mvImpl.toolbarAction = 0;
-            chrome.runtime.sendMessage({action: 'cancelSelectMode'});
-          }
+    mvImpl.status = 'selectVideo';
+    // console.log('scanVideo');
+    const selector = 'video';
+    let elements = findVideoElements(selector)
+    const _uploadElemInfo = () => {
+      mvImpl.scanVideoTimer = null;
+      if(mvImpl.status === 'selectVideo'){
+        uploadElemInfo(elements, message.minWidth, message.minHeight );
+        elements = findVideoElements(selector);
+        uploadElemInfo(elements, message.minWidth, message.minHeight, true);
+        mvImpl.scanVideoTimer = setTimeout(_uploadElemInfo, 200);
+      }
+      if(window === window.top && mvImpl.toolbarAction === 1) {
+        let diffTime = new Date() - mvImpl.startScanTime;
+        if(diffTime > 3000) {
+          mvImpl.toolbarAction = 0;
+          chrome.runtime.sendMessage({action: 'cancelSelectMode'});
         }
       }
-      _uploadElemInfo();
     }
+    _uploadElemInfo();
   }
   else if(message.action === 'cancelSelectMode') {
     mvImpl.status = 'normal';
