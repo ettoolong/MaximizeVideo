@@ -547,7 +547,8 @@ function restoreVideo() {
   }
 };
 
-function maximizeVideo(selectedNode) {
+function maximizeVideo(selectedNode, chain = []) {
+  const _chain = [...chain]
   const hideAllSibling = (node) => {
     if(node === mvImpl.mainNode) {
       node.setAttribute('mvclass', 'core');
@@ -557,9 +558,16 @@ function maximizeVideo(selectedNode) {
     }
 
     let parent = node.parentNode;
-    if(parent && parent.nodeType === Node.ELEMENT_NODE) {
-      if(!mvImpl.topTags.includes(parent.tagName.toLocaleLowerCase())) {
-        hideAllSibling(parent);
+    if(parent) {
+      if (parent.nodeType === Node.ELEMENT_NODE ) {
+        if(!mvImpl.topTags.includes(parent.tagName.toLocaleLowerCase())) {
+          hideAllSibling(parent);
+        }
+      } else if (parent.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
+        if (_chain.length) {
+          parent = _chain.pop()
+          hideAllSibling(parent);
+        }
       }
     }
   };
@@ -831,6 +839,77 @@ function setHideCursorTimer() {
   }
 }
 
+function findVideoElements(selector) {
+  const elements = []
+
+  document.querySelectorAll(selector).forEach(element => {
+    elements.push(element)
+  })
+
+  const shadowRoots = []
+  const _findShadowRoots = (root) => {
+    root.querySelectorAll('*').forEach(element => {
+      // No shadow root? Continue.
+      if (!element.shadowRoot) {
+        return
+      }
+      shadowRoots.push(element)
+      _findShadowRoots(element.shadowRoot)
+    })
+  }
+  _findShadowRoots(document)
+  if (shadowRoots.length) {
+    for(const e of shadowRoots) {
+      const v = e.shadowRoot.querySelector(selector)
+      if (v) {
+        elements.push(v)
+      }
+    }
+  }
+  return elements
+}
+
+function findVideoElement(selector) {
+  const videoElem = document.querySelector(selector)
+  if (videoElem) {
+    return { elem: videoElem, chain: []}
+  }
+
+  const _findShadowRoots = (root, chain) => {
+    let res = { elem: null, chain: chain}
+    root.querySelectorAll('*').forEach(element => {
+      // No shadow root? Continue.
+      if (!element.shadowRoot) {
+        return
+      }
+      if (!element.querySelector('#shadowStyle')) {
+        const shadowStyle = document.createElement('style');
+        shadowStyle.setAttribute('id', 'shadowStyle')
+        shadowStyle.textContent = `
+          :host([mvclass=show]) *:not([mvclass=show]):not([mvclass=core]) {
+            display:none !important;
+            opacity:0 !important;
+            visibility: hidden !important;
+          }
+        `;
+        element.appendChild(shadowStyle);
+      }
+      const e = element.shadowRoot.querySelector(selector)
+      if (e) {
+        res = {elem: e, chain: [ ...chain, element ]}
+      } else {
+        const res2 = _findShadowRoots(element.shadowRoot, [ ...chain, element ])
+        if (res2.elem) {
+          res = res2
+        }
+      }
+    })
+    return res
+  }
+  const res = _findShadowRoots(document, [])
+  return res
+}
+
 chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
   if(message.action === 'videoHotkey') {
     if(mvImpl.mainNode.tagName === 'VIDEO') {
@@ -849,7 +928,7 @@ chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
         v.pause();
     }
 
-    let elem = document.querySelector('video[mvHashCode="'+message.hashCode+'"],embed[mvHashCode="'+message.hashCode+'"][type="application/x-shockwave-flash"],object[mvHashCode="'+message.hashCode+'"][type="application/x-shockwave-flash"]');
+    let { elem, chain } = findVideoElement('video[mvHashCode="'+message.hashCode+'"]')
     if(elem) {
       initPrefs( ()=>{
         setHideCursorTimer();
@@ -864,7 +943,7 @@ chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
         },{capture: true, once: true});
       }
       mvImpl.strict = message.strict;
-      maximizeVideo(elem);
+      maximizeVideo(elem, chain);
       if(mvImpl.mainNode.tagName === 'VIDEO') {
         mvImpl.mainNode.focus({preventScroll:true});
       }
@@ -912,13 +991,13 @@ chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
     if(window === window.top) {
       mvImpl.status = 'selectVideo';
       // console.log('scanVideo');
-      let selector = 'video';
-      let elements = document.querySelectorAll(selector);
+      const selector = 'video';
+      let elements = findVideoElements(selector)
       const _uploadElemInfo = () => {
         mvImpl.scanVideoTimer = null;
         if(mvImpl.status === 'selectVideo'){
           uploadElemInfo(elements, message.minWidth, message.minHeight );
-          elements = document.querySelectorAll(selector);
+          elements = findVideoElements(selector);
           uploadElemInfo(elements, message.minWidth, message.minHeight, true);
           mvImpl.scanVideoTimer = setTimeout(_uploadElemInfo, 200);
         }
