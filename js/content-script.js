@@ -791,9 +791,9 @@ function uploadElemInfo(elements, minWidth, minHeight, onlyUpdateNewElem) {
     }
   }
   // TODO: Need fix this
-  // if(window !== window.top && elemInfos.length) {
-  //   window.parent.postMessage({action: 'getId', senderId: selfId, nextAction: 'addVideoElements', extDate: elemInfos},'*');
-  // }
+  if(window !== window.top && elemInfos.length) {
+    window.parent.postMessage({action: 'getId', senderId: selfId, nextAction: 'addVideoElements', extDate: elemInfos},'*');
+  }
 }
 
 function removeVideoMask() {
@@ -882,32 +882,30 @@ chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
     }
   }
   else if(message.action === 'setVideoMask') {
-    if(window === window.top) {
-      if(mvImpl.status === 'normal') {
-        mvImpl.toolbarAction = message.toolbarAction;
-        // console.log('setVideoMask');
-        // console.log(new Date());
-        removeVideoMask();
-        if (document.readyState === 'complete' || document.readyState === 'interactive') {
-          mvImpl.startScanTime = new Date();
-          let cover = document.createElement('DIV');
-          cover.classList.add('mvCover');
-          cover.setAttribute('mvMaskHash', message.hashCode);
-          document.body.appendChild(cover);
-          let msg = {action: 'scanVideo', hashCode: message.hashCode};
-          // if(message.supportFlash !== undefined) msg.supportFlash = message.supportFlash;
-          if(message.minWidth !== undefined) msg.minWidth = message.minWidth;
-          if(message.minHeight !== undefined) msg.minHeight = message.minHeight;
-          chrome.runtime.sendMessage(msg);
-        }
+    if(mvImpl.status === 'normal') {
+      mvImpl.toolbarAction = message.toolbarAction;
+      // console.log('setVideoMask');
+      // console.log(new Date());
+      removeVideoMask();
+      if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        mvImpl.startScanTime = new Date();
+        let cover = document.createElement('DIV');
+        cover.classList.add('mvCover');
+        cover.setAttribute('mvMaskHash', message.hashCode);
+        document.body.appendChild(cover);
+        let msg = {action: 'scanVideo', hashCode: message.hashCode};
+        // if(message.supportFlash !== undefined) msg.supportFlash = message.supportFlash;
+        if(message.minWidth !== undefined) msg.minWidth = message.minWidth;
+        if(message.minHeight !== undefined) msg.minHeight = message.minHeight;
+        chrome.runtime.sendMessage(msg);
       }
-      else if(mvImpl.status === 'selectVideo') {
-        chrome.runtime.sendMessage({action: 'cancelSelectMode'});
-      }
-      else if(mvImpl.status === 'maximaVideo') {
-        clearHideCursorTimer();
-        chrome.runtime.sendMessage({action: 'cancelMaximaMode'});
-      }
+    }
+    else if(mvImpl.status === 'selectVideo') {
+      chrome.runtime.sendMessage({action: 'cancelSelectMode'});
+    }
+    else if(mvImpl.status === 'maximaVideo') {
+      clearHideCursorTimer();
+      chrome.runtime.sendMessage({action: 'cancelMaximaMode'});
     }
   }
   else if(message.action === 'scanVideo') {

@@ -3,7 +3,7 @@
   "manifest_version": 3,
   "minimum_chrome_version": "125",
   "name": "__MSG_extName__",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "homepage_url": "https://github.com/ettoolong/MaximizeVideo",
   "icons": {
     "16": "icon/icon.png",
