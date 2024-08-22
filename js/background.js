@@ -5,14 +5,14 @@ let selectedVideo = null;
 let defaultPreference = {
   popupWindow: false,
   toolbarAction: 0,
-  supportFlash: true,
+  // supportFlash: true,
   minWidth: 100,
   minHeight: 100,
   autoHideCursor: false,
   delayForHideCursor: 5,
   iconColor: 0,
   youtubeControllers: false,
-  version: 7
+  version: 8
 };
 let preferences = {};
 
@@ -170,7 +170,7 @@ const messageHandler = (message, sender, sendResponse) => {
     }, () => {
       chrome.tabs.sendMessage(sender.tab.id, {
         action: 'scanVideo',
-        supportFlash: message.supportFlash !== undefined ? message.supportFlash : preferences.supportFlash,
+        // supportFlash: message.supportFlash !== undefined ? message.supportFlash : preferences.supportFlash,
         minWidth: message.minWidth !== undefined ? message.minWidth : preferences.minWidth,
         minHeight: message.minHeight !== undefined ? message.minHeight : preferences.minHeight
       }, {frameId: sender.frameId});
@@ -193,7 +193,7 @@ const messageHandler = (message, sender, sendResponse) => {
     chrome.tabs.sendMessage(sender.tab.id, {
       action: 'scanVideo',
       hashCode: message.hashCode,
-      supportFlash: message.supportFlash !== undefined ? message.supportFlash : preferences.supportFlash,
+      // supportFlash: message.supportFlash !== undefined ? message.supportFlash : preferences.supportFlash,
       minWidth: message.minWidth !== undefined ? message.minWidth : preferences.minWidth,
       minHeight: message.minHeight !== undefined ? message.minHeight : preferences.minHeight
     });
@@ -272,7 +272,7 @@ const externalMessageHandler = (message, sender, sendResponse) => {
       action: 'setVideoMask',
       toolbarAction: toolbarAction,
       hashCode: hashCode,
-      supportFlash: message.supportFlash !== undefined ? message.supportFlash : preferences.supportFlash,
+      // supportFlash: message.supportFlash !== undefined ? message.supportFlash : preferences.supportFlash,
       minWidth: message.minWidth !== undefined ? message.minWidth : preferences.minWidth,
       minHeight: message.minHeight !== undefined ? message.minHeight : preferences.minHeight
     });
