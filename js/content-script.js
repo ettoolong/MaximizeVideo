@@ -545,10 +545,17 @@ function restoreVideo() {
       node.removeAttribute('mvclass');
     }
   }
+
+  if(mvImpl.scrollPosition) {
+    window.scrollTo(mvImpl.scrollPosition.x, mvImpl.scrollPosition.y);
+  }
 };
 
 function maximizeVideo(selectedNode, chain = []) {
   const _chain = [...chain]
+
+  mvImpl.scrollPosition = { x: window.scrollX, y: window.scrollY };
+
   const hideAllSibling = (node) => {
     if(node === mvImpl.mainNode) {
       node.setAttribute('mvclass', 'core');
